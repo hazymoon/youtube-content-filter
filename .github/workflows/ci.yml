@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run fmt:check
+      - run: npm test
+      # dist はコミットせず、リリースのときに作って Release に添付する。結合で壊れないかだけをここで確かめる
+      - run: npm run build
