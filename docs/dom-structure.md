@@ -17,7 +17,7 @@ YouTube の変更で壊れうるので、セレクタは `src/` の 1 か所の�
 | 動画ページの右の列 | `ytd-watch-next-secondary-results-renderer` の中の `yt-lockup-view-model` | 新しい部品 | する |
 | 自動再生の次の動画 | `.ytp-autonav-endscreen-link-container`（プレーヤーの中の `a`） | プレーヤーの部品 | する |
 | 終わりの候補 | `.ytp-videowall-still`（プレーヤーの中の `a`） | プレーヤーの部品 | する |
-| 検索結果に差し込まれる棚 | `grid-shelf-view-model` の中の `.ytGridShelfViewModelGridShelfItem` | 新しい部品 | 工程 3 で決める（後述） |
+| 検索結果に差し込まれる棚 | `grid-shelf-view-model` の中の `.ytGridShelfViewModelGridShelfItem` | 新しい部品 | する（見出しが「ショート」の棚も、検索語に近い言葉の棚も） |
 | 検索の本来の結果 | `ytd-video-renderer` | 古い部品 | しない |
 
 新しい部品（`*-view-model`）と古い部品（`*-renderer`）は混在しています。
@@ -94,6 +94,7 @@ ytm-shorts-lockup-view-model
 
 - 動画 ID はリンクの `/shorts/<ID>`、タイトルは `h3 a` の textContent（`title` 属性と一致）
 - チャンネル名は表示に無い。判定の材料はタイトルだけになる
+- ホームの Shorts の棚も判定する（2026-11-04 に利用者が決めた）。Shorts の再生画面は対象外のまま
 
 ## 動画ページの右の列
 
@@ -153,7 +154,7 @@ ytd-search[page-subtype="search"]
 
 - 本来の結果と差し込まれる棚は、`div#contents` の直下の要素の名前で見分けられる。棚は `grid-shelf-view-model` で、それ以外は本来の結果
 - 11 の検索語（料理・楽器・動物・旅行・ゲームなど）を試したが、「他の人はこちらも視聴」のような、検索の内容と関係なく混ざる動画の棚は 1 つも出なかった。古い部品の棚（`ytd-shelf-renderer`）も無かった。調べたのは最初のページ（続きを読み込む前）だけ
-- 出た棚はすべて Shorts で、見出しは「ショート」か、検索語に近い言葉（「ギター」「鍵盤」「生活様式」など）だった。検索の内容と関係のある棚なので、判定するかは工程 3 の前に決める
+- 出た棚はすべて Shorts で、見出しは「ショート」か、検索語に近い言葉（「ギター」「鍵盤」「生活様式」など）だった。検索の内容と関係のある棚だが、利用者が自分で選んだ結果ではないので、どの棚も判定する（2026-11-04 に利用者が決めた）
 
 ## CSS だけで隠せるセレクタ
 
