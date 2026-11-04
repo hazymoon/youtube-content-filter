@@ -156,6 +156,60 @@ ytd-search[page-subtype="search"]
 - 11 の検索語（料理・楽器・動物・旅行・ゲームなど）を試したが、「他の人はこちらも視聴」のような、検索の内容と関係なく混ざる動画の棚は 1 つも出なかった。古い部品の棚（`ytd-shelf-renderer`）も無かった。調べたのは最初のページ（続きを読み込む前）だけ
 - 出た棚はすべて Shorts で、見出しは「ショート」か、検索語に近い言葉（「ギター」「鍵盤」「生活様式」など）だった。検索の内容と関係のある棚だが、利用者が自分で選んだ結果ではないので、どの棚も判定する（2026-11-04 に利用者が決めた）
 
+## 動画の枠のメニューと「興味なし」
+
+工程 4 のために、2026-11-04 に Chrome 156 で調べました。
+メニューは開いて中身を読み、すぐに閉じただけで、「興味なし」は押していません。
+
+### メニューを開くボタン
+
+| 枠 | ボタン |
+| --- | --- |
+| `yt-lockup-view-model`（ホーム・右の列） | `.ytLockupMetadataViewModelMenuButton button`（`aria-label` は「その他の操作」） |
+| Shorts の枠（ホーム・検索結果の棚） | `.shortsLockupViewModelHostOutsideMetadataMenu button` |
+| 終わりの候補・自動再生の次の動画 | 無い |
+
+ボタンを押すと、`ytd-popup-container` の中の `tp-yt-iron-dropdown` が表示されます（`display` が `none` でなくなる）。
+
+```text
+tp-yt-iron-dropdown
+└ yt-sheet-view-model
+  └ yt-contextual-sheet-layout > div.ytContextualSheetLayoutContentContainer
+    └ yt-list-view-model[role="menu"]
+      └ yt-list-item-view-model                 … 項目 1 つ（文言はこの要素の textContent）
+        └ … > button[role="menuitem"]           … 押す要素
+```
+
+メニューの外の `body` をクリックすると閉じました。
+
+### 「興味なし」の見分け方
+
+メニューの項目の要素にはデータがありませんでした。
+項目の一覧は、枠のデータの中にあります。
+
+| 枠 | データ | 一覧の場所 |
+| --- | --- | --- |
+| ホームの動画 | `ytd-rich-item-renderer` の `.data.content.lockupViewModel` | `metadata.lockupMetadataViewModel.menuButton.buttonViewModel.onTap.innertubeCommand.showSheetCommand.panelLoadingStrategy.inlineContent.sheetViewModel.content.listViewModel.listItems` |
+| 右の列の動画 | `yt-lockup-view-model` の `.componentProps.data()` | 同じ |
+| ホームの Shorts | `ytd-rich-item-renderer` の `.data.content.shortsLockupViewModel` | `menuOnTap.innertubeCommand.showSheetCommand.panelLoadingStrategy.inlineContent.sheetViewModel.content.listViewModel.listItems` |
+| 検索結果の棚の Shorts | `ytm-shorts-lockup-view-model` の `.componentProps.data()` | 同じ |
+
+一覧の各要素は `listItemViewModel` で、`leadingImage.sources[0].clientResource.imageName` にアイコンの名前があります。
+
+| 項目 | アイコンの名前 | 押したときの命令 |
+| --- | --- | --- |
+| 興味なし | `HIDE` | `feedbackEndpoint` |
+| チャンネルをおすすめに表示しない | `REMOVE` | `feedbackEndpoint` |
+| [後で見る] に保存 | `WATCH_LATER` | ほか |
+| 報告 | `FLAG` | ほか |
+
+- 「興味なし」は、アイコンの名前が `HIDE` で、命令が `feedbackEndpoint` のもので見分けられる。文言（表示の言語で変わる）にもアイコンの絵（「[後で見る] に保存」と同じ形だった）にも頼らない
+- データの一覧の並びと、開いたメニューの項目の並びは一致した（右の列の 3 件。1 件は 7 項目、2 件は 8 項目）。8 項目のときは、データの 4 番目に文言の無い項目があり、メニューでは「オフライン」だった
+- ホームの Shorts のメニューでは、同じ項目（アイコンの名前 `HIDE`、命令 `feedbackEndpoint`）の文言が「興味なし」ではなく「関心がない」だった。文言で探すと見逃す
+- 工程 4 の実装の後、ホームの 6 件（likely 3 件・maybe 3 件。Shorts 1 件を含む）で、押す直前までの手順を確かめた。6 件とも、データで見つけた位置の項目がメニューにあり、数と文言が一致した。likely の枠（display:none）でも、メニューのボタンを押すとメニューが開いた。最後の「興味なし」は押していない
+- 検索結果の棚の Shorts のメニューには「興味なし」が無かった（「キューに追加」「報告」「フィードバック」の 3 つ）
+- 終わりの候補と自動再生の次の動画にはメニューが無い
+
 ## CSS だけで隠せるセレクタ
 
 判定が終わるまで枠を隠すには、スクリプトの処理を待たずに、DOM に入った時点で隠れている必要があります。

@@ -14,6 +14,12 @@ export const KEY_ATTRIBUTE = 'data-ycontent-key';
 export const REVEAL_ATTRIBUTE = 'data-ycontent-reveal';
 /** 帯の要素のクラス */
 export const BAND_CLASS = 'ycontent-band';
+/** 帯の中の、見せる・戻すを切り替えるボタンのクラス */
+export const BAND_TOGGLE_CLASS = 'ycontent-band-toggle';
+/** 帯の中の「興味なし」のボタンのクラス */
+export const BAND_NOT_INTERESTED_CLASS = 'ycontent-not-interested';
+/** 枠に付ける。「興味なし」を送ったら sent、操作できなかったら failed。件数バーからまとめて送るときに重ねて送らないため */
+export const SENT_ATTRIBUTE = 'data-ycontent-sent';
 /** 件数バーの要素の ID */
 export const BAR_ID = 'ycontent-bar';
 
@@ -96,10 +102,11 @@ ${texts} {
   inset: 0;
   z-index: 10;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   padding: 8px;
-  border: 0;
   border-radius: 12px;
   background: rgba(32, 32, 32, 0.72);
   color: #fff;
@@ -108,9 +115,23 @@ ${texts} {
   cursor: pointer;
   visibility: visible;
 }
+.${BAND_CLASS} button {
+  padding: 2px 8px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.${BAND_CLASS} .${BAND_NOT_INTERESTED_CLASS} {
+  border: 1px solid #fff;
+  border-radius: 4px;
+  font-size: 12px;
+}
 [${REVEAL_ATTRIBUTE}] > .${BAND_CLASS} {
   inset: 4px auto auto 4px;
-  padding: 2px 8px;
+  flex-direction: row;
+  padding: 2px 4px;
   border-radius: 8px;
   font-size: 12px;
 }

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { HINT_THRESHOLD, buildBarText, decideFrame } from '../src/decide.js';
+import { HINT_THRESHOLD, buildBarText, decideFrame, sendButtonLabel } from '../src/decide.js';
 
 const READY = { mode: 'ready' };
 
@@ -82,4 +82,21 @@ test('件数バーは AI の状態と設定の誤りを知らせる', () => {
   assert.equal(buildBarText({ ...base, aiState: { mode: 'needs-activation' } }).needsActivation, true);
   assert.match(buildBarText({ ...base, aiState: { mode: 'failed' } }).status, /AI が使えない/);
   assert.match(buildBarText({ ...base, aiState: READY, topicsUnreadable: true }).status, /avoidTopics/);
+});
+
+test('件数バーの「興味なし」のボタンは、送る前にもう一度押させて確かめる', () => {
+  assert.equal(sendButtonLabel({ phase: 'idle', count: 3, sent: 0, failed: 0 }), '消した 3 件に「興味なし」を送る');
+  assert.match(sendButtonLabel({ phase: 'confirm', count: 3, sent: 0, failed: 0 }), /もう一度押すと.*3 件/);
+  assert.equal(sendButtonLabel({ phase: 'sending', count: 3, sent: 1, failed: 0 }), '送っています（1 / 3）');
+  assert.equal(
+    sendButtonLabel({ phase: 'done', count: 3, sent: 2, failed: 1 }),
+    '2 件に送りました。1 件は操作できませんでした',
+  );
+  assert.equal(sendButtonLabel({ phase: 'done', count: 2, sent: 2, failed: 0 }), '2 件に送りました');
+});
+
+test('「興味なし」を促す文言は、帯と件数バーのボタンを指す', () => {
+  const many = buildBarText({ hidden: HINT_THRESHOLD, blurred: 0, aiState: READY, topicsUnreadable: false });
+  assert.match(many.hint ?? '', /帯/);
+  assert.match(many.hint ?? '', /下のボタン/);
 });

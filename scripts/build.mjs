@@ -48,6 +48,7 @@ export const MODULE_ORDER = [
   'dom.js',
   'decide.js',
   'styles.js',
+  'not-interested.js',
   'ui.js',
   'lm.js',
   'scanner.js',
