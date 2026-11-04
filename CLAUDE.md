@@ -28,7 +28,7 @@ END_COMMIT_OVERRIDE
 
 ### dist はコミットしない
 
-`dist/` は git の管理外で、Release のときにワークフローがビルドして添付する。実機で確かめる前には `npm run build` で作り直す。
+`dist/` は git の管理外で、Release のときにワークフローがビルドして添付する。実機で確かめる前には `npm run build:dev` で開発用のビルドを作り直す（配布するものと「値」タブを分けるため。CONTRIBUTING.md の「手元の dist を実機で確かめる」）。
 
 ### 整形だけのコミットを git blame から外す
 
