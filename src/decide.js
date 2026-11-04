@@ -68,8 +68,35 @@ export function buildBarText({ hidden, blurred, aiState, topicsUnreadable }) {
     status: [counts, ...notes].join('。'),
     hint:
       hidden + blurred >= HINT_THRESHOLD
-        ? 'おすすめそのものを変えるには、動画のメニューの「興味なし」を使ってください'
+        ? 'おすすめそのものを変えるには「興味なし」を送ってください（ぼかした動画は帯のボタン、消した動画は下のボタンから）'
         : null,
     needsActivation: aiState.mode === 'needs-activation',
   };
+}
+
+/**
+ * 件数バーの「消した動画に興味なしを送る」の状態。
+ * - idle: まだ押していない
+ * - confirm: 1 回押した。もう一度押すと送る（誤って押しただけでアカウントに送らないため）
+ * - sending: 送っている
+ * - done: 送り終えた
+ * @typedef {object} SendState
+ * @property {'idle'|'confirm'|'sending'|'done'} phase 状態
+ * @property {number} count 送る件数
+ * @property {number} sent 送った件数
+ * @property {number} failed 操作できなかった件数
+ */
+
+/**
+ * 件数バーの「消した動画に興味なしを送る」のボタンの文言を返す。
+ * @param {SendState} state 状態
+ * @returns {string}
+ */
+export function sendButtonLabel({ phase, count, sent, failed }) {
+  if (phase === 'confirm') return `もう一度押すと、消した ${count} 件に「興味なし」を送ります`;
+  if (phase === 'sending') return `送っています（${sent + failed} / ${count}）`;
+  if (phase === 'done') {
+    return failed > 0 ? `${sent} 件に送りました。${failed} 件は操作できませんでした` : `${sent} 件に送りました`;
+  }
+  return `消した ${count} 件に「興味なし」を送る`;
 }

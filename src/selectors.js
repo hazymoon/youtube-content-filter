@@ -54,3 +54,13 @@ export const STILL_CHANNEL_SELECTOR = '.ytp-videowall-still-info-author';
 export const UPNEXT_SELECTOR = '.ytp-autonav-endscreen-link-container';
 export const UPNEXT_TITLE_SELECTOR = '.ytp-autonav-endscreen-upnext-title';
 export const UPNEXT_CHANNEL_SELECTOR = '.ytp-autonav-endscreen-upnext-author';
+
+/** 動画の枠のメニューを開くボタン（docs/dom-structure.md の「メニューを開くボタン」） */
+export const MENU_BUTTON_SELECTOR =
+  '.ytLockupMetadataViewModelMenuButton button, .shortsLockupViewModelHostOutsideMetadataMenu button';
+/** 開いたメニュー。表示中のものは display が none でない */
+export const MENU_POPUP_SELECTOR = 'ytd-popup-container tp-yt-iron-dropdown';
+/** メニューの項目 */
+export const MENU_ITEM_SELECTOR = 'yt-list-item-view-model';
+/** メニューの項目の中の、押す要素 */
+export const MENU_ITEM_BUTTON_SELECTOR = 'button[role="menuitem"]';
