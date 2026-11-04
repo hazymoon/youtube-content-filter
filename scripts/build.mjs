@@ -14,6 +14,7 @@
  * const / let / class の重複（分割代入・複数宣言子を含む）はその SyntaxError で止める。
  *
  * `node scripts/build.mjs` で実行すると dist/youtube-content-filter.user.js に書き出す。
+ * `--dev` を付けると、開発用のメタデータ（devMeta）で dist/youtube-content-filter.dev.user.js に書き出す。
  */
 
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -28,6 +29,9 @@ export const SRC_DIR = join(ROOT_DIR, 'src');
 
 /** 出力先 */
 export const OUTPUT_PATH = join(ROOT_DIR, 'dist', 'youtube-content-filter.user.js');
+
+/** 開発用のビルドの出力先（`node scripts/build.mjs --dev`） */
+export const DEV_OUTPUT_PATH = join(ROOT_DIR, 'dist', 'youtube-content-filter.dev.user.js');
 
 /**
  * 結合する順序。利用者が設定を読みやすいように config.js を先頭に置き、起動処理の main.js を最後に置く。
@@ -91,6 +95,24 @@ const CODE_CONTEXT_PROBE = ')(}{';
 const UNSUPPORTED_EXPORT_PATTERN = /^export\s+(?:default\b|\{|\*)/m;
 const TOP_LEVEL_DECLARATION_PATTERN =
   /^(?:async\s+)?(?:function\s*\*?\s*|(?:class|const|let|var)\s+)([A-Za-z_$][\w$]*)/gm;
+
+/**
+ * 開発用のメタデータを作る。
+ * Violentmonkey は @name と @namespace の組でスクリプトを見分けるので、両方を変えて、配布するものと別のスクリプトとして入れる。
+ * そうすると「値」タブ（avoidTopics や判定の保存）も分かれ、確かめるための値が普段使いの値に混ざらない。
+ * 自動更新の URL は外す（Release のファイルで開発用のものが上書きされないようにするため）。
+ * @param {[string, string][]} meta 配布するもののメタデータ
+ * @returns {[string, string][]}
+ */
+export function devMeta(meta) {
+  return meta
+    .filter(([key]) => key !== 'downloadURL' && key !== 'updateURL')
+    .map(([key, value]) => {
+      if (key === 'name') return [key, `${value} (dev)`];
+      if (key === 'namespace') return [key, `${value}#dev`];
+      return [key, value];
+    });
+}
 
 /**
  * メタデータブロックの文字列を作る。
@@ -239,8 +261,10 @@ export function buildUserscript({ srcDir = SRC_DIR, order = MODULE_ORDER, meta =
 
 const isCli = process.argv[1] !== undefined && import.meta.url === pathToFileURL(resolve(process.argv[1])).href;
 if (isCli) {
-  const output = buildUserscript();
-  mkdirSync(dirname(OUTPUT_PATH), { recursive: true });
-  writeFileSync(OUTPUT_PATH, output);
-  console.log(`wrote ${OUTPUT_PATH}`);
+  const dev = process.argv.includes('--dev');
+  const outputPath = dev ? DEV_OUTPUT_PATH : OUTPUT_PATH;
+  const output = buildUserscript(dev ? { meta: devMeta(USERSCRIPT_META) } : {});
+  mkdirSync(dirname(outputPath), { recursive: true });
+  writeFileSync(outputPath, output);
+  console.log(`wrote ${outputPath}`);
 }

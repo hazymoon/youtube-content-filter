@@ -13,14 +13,27 @@ CI は lint・整形（`npm run fmt:check`）・テスト・ビルドを確か�
 
 ## 手元の dist を実機で確かめる
 
-Violentmonkey にローカルの dist を追跡させると、`npm run build` のたびに読み込み直します。
+実機で確かめるときは、開発用のビルドを使います。
+
+```sh
+npm run build:dev
+```
+
+`dist/youtube-content-filter.dev.user.js` に書き出します。`@name` は「YouTube Content Filter (dev)」で、`@namespace` も配布するものと違います。
+Violentmonkey は `@name` と `@namespace` の組でスクリプトを見分けるので、Release から入れたものとは別のスクリプトとして入り、「値」タブも分かれます。
+確かめるための `avoidTopics` を書いても、普段使いの値や判定の保存には混ざりません。
+自動更新の URL も外してあるので、Release で上書きされることもありません。
+
+Violentmonkey にローカルの dist を追跡させると、`npm run build:dev` のたびに読み込み直します。
 
 1. `chrome://extensions` → Violentmonkey の「詳細」で「ファイルの URL へのアクセスを許可する」をオンにする
-2. `file:///<リポジトリの絶対パス>/dist/youtube-content-filter.user.js` を開き、ローカルのファイルを追跡するチェックを入れてインストールする（worktree なら、その worktree の `dist/` を開く）
+2. `file:///<リポジトリの絶対パス>/dist/youtube-content-filter.dev.user.js` を開き、ローカルのファイルを追跡するチェックを入れてインストールする（worktree なら、その worktree の `dist/` を開く）
 3. インストール画面のタブは開いたままにする（閉じると追跡が止まる）
 
-Release から入れたものと入れ替わるので、確かめ終わったら [README のインストール](README.md#インストール)の URL から入れ直します。
-ブランチを切り替えたら、`npm run build` で作り直します。
+開発用と Release から入れたものを同時に有効にすると、両方が同じ動画を判定して表示が干渉します。確かめている間は、Release から入れたものを Violentmonkey のダッシュボードで無効にします。
+ブランチを切り替えたら、`npm run build:dev` で作り直します。
+
+「興味なし」は YouTube のアカウントに送られるので、開発用でも普段のおすすめに効きます。確かめるときは、送ってよい動画で行います。
 
 ## リリース
 
