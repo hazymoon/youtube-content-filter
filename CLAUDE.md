@@ -37,3 +37,13 @@ END_COMMIT_OVERRIDE
 ## 共通部分
 
 AI の判定の土台（`src/lm.js` `src/queue.js` `src/cache.js` `src/settings.js` `src/hash.js` `src/navigation.js`）は youtube-comment-filter から複製した。複製元のコミットと変えたところは `docs/upstream.md` にある。共通部分を直したら、同じ修正が youtube-comment-filter にも要るかを PR に書く。
+
+## 開発の決まり
+
+### 不具合はテストを先に書いて直す
+
+不具合を直すときは、先に失敗するテストを書き、修正前のコードで失敗する（RED になる）ことを確かめてから直す。直した後のコードを見ながら書いたテストは、不具合を捉えていなくても通ってしまうため。
+
+### 実機の確認では動画をミュートする
+
+Claude in Chrome で動画ページを開いたら、操作を始める前にミュートする。自動再生で、利用者の手元で音が出るのを防ぐため。
