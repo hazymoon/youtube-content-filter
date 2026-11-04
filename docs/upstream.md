@@ -15,7 +15,7 @@ youtube-comment-filter の `origin/main` の `0d6b14c61b79988103c57b42658c2f75ef
 
 複製元と同じ内容です（git の blob のハッシュが一致することを確かめた）。
 
-- `src/cache.js` / `src/hash.js`
+- `src/hash.js`
 - `test/cache.test.js` / `test/hash.test.js`
 - `.github/workflows/ci.yml` / `.oxfmtrc.json` / `.gitignore` / `LICENSE`
 
@@ -28,6 +28,7 @@ youtube-comment-filter の `origin/main` の `0d6b14c61b79988103c57b42658c2f75ef
 | `test/queue*.test.js`（6 ファイル） | カテゴリの代わりに `test/fixtures/comment-codec.js` の codec を渡す。期待値は変えていない |
 | `.github/workflows/release-please.yml` | dist のファイル名を変えた |
 | `package-lock.json` | 名前とバージョンだけを変えた（依存のバージョンと取得元は同じ） |
+| `src/cache.js` | 判定結果と保存形式の変換（`verdictCodec`）を引数で差し替えられるようにした（工程 3）。既定は複製元と同じ `{ hide, category }` の変換で、`test/cache.test.js` はそのまま通る。このリポジトリは `{ level, topic }` の変換（`src/ai.js` の `LEVEL_VERDICT_CODEC`）を渡す |
 | `src/lm.js` | `ai.js` の `buildInitialPrompts` を import せず、指示文（`initialPrompts`）を引数で受け取る。`decide.js` にあった `AiState` / `AiMode` の型を lm.js に移した |
 | `src/queue.js` | `ai.js` の `buildBatchInput` / `buildResponseSchema` / `parseBatchResponse` を import せず、入力と応答の形（`AiCodec`）を引数 `codec` で受け取る。まとめた判定を 1 件ずつ判定し直す条件（複製元の `hide:true`）も `codec.needsConfirm` に移した |
 | `src/settings.js` | 値の検証の仕組み（`STORED_OPTION_SPECS` と `parseStoredOptions`）と、`aiEnabled` / `aiBatchSize` / `aiTimeoutMs` / `aiMaxChars` / `aiCacheMaxEntries` / `debug` だけを残した。NG ユーザ・NG ワード・許可ユーザ・リンクのドメイン・カテゴリなど、コメント用の値は外した |
@@ -49,8 +50,8 @@ youtube-comment-filter の `origin/main` の `0d6b14c61b79988103c57b42658c2f75ef
 
 ## 複製しなかったもの
 
-- `src/ai.js`: コメント用の指示文と応答の形。この判定用のものは工程 3 で書く
-- `test/cache-version.test.js`: `ai.js` の `cacheVersion` のテスト。キャッシュのバージョンの作り方は工程 3 で決める
+- `src/ai.js`: コメント用の指示文と応答の形。このリポジトリの `src/ai.js` は工程 3 で別に書いた
+- `test/cache-version.test.js`: 複製元の `ai.js` の `cacheVersion` のテスト。このリポジトリの `cacheVersion` のテストは `test/ai.test.js` にある
 - `test/settings.test.js` / `test/settings-link-domains*.test.js` / `test/settings-options-copy.test.js`: 外した値のテスト
 - コメントの DOM・表示・ルールの判定（`dom.js` / `scanner.js` / `rules.js` / `styles.js` / `ui.js` など）
 
