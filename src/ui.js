@@ -44,14 +44,14 @@ export function applyFrameState(frame, state, topic) {
       frame.toggleAttribute(REVEAL_ATTRIBUTE, revealed);
       /** @type {HTMLElement} */ (event.currentTarget).textContent = bandText(
         /** @type {'maybe'|'unknown'} */ (frame.getAttribute(STATE_ATTRIBUTE)),
-        frame.dataset.ycfTopic || null,
+        frame.dataset.ycontentTopic || null,
         revealed,
       );
     });
     frame.append(band);
   }
-  if (topic) frame.dataset.ycfTopic = topic;
-  else delete frame.dataset.ycfTopic;
+  if (topic) frame.dataset.ycontentTopic = topic;
+  else delete frame.dataset.ycontentTopic;
   band.textContent = bandText(state, topic, false);
 }
 
@@ -62,7 +62,7 @@ export function applyFrameState(frame, state, topic) {
 export function resetFrameState(frame) {
   frame.removeAttribute(STATE_ATTRIBUTE);
   frame.removeAttribute(REVEAL_ATTRIBUTE);
-  delete frame.dataset.ycfTopic;
+  delete frame.dataset.ycontentTopic;
   frame.querySelector(`:scope > .${BAND_CLASS}`)?.remove();
 }
 

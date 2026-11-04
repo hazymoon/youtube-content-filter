@@ -65,7 +65,7 @@ export function createScanner({ root, topicsUnreadable, getAiState, cache, enque
           resetFrameState(frame);
           frame.setAttribute(KEY_ATTRIBUTE, key);
         }
-        if (frame.getAttribute(STATE_ATTRIBUTE) === 'unknown' && frame.dataset.ycfReason === 'ai' && aiUsable) {
+        if (frame.getAttribute(STATE_ATTRIBUTE) === 'unknown' && frame.dataset.ycontentReason === 'ai' && aiUsable) {
           resetFrameState(frame);
         }
         if (!frame.hasAttribute(STATE_ATTRIBUTE)) {
@@ -79,8 +79,8 @@ export function createScanner({ root, topicsUnreadable, getAiState, cache, enque
             toEnqueue.set(info.id, { id: info.id, text });
           } else {
             applyFrameState(frame, decision.state, decision.topic);
-            if (decision.reason) frame.dataset.ycfReason = decision.reason;
-            else delete frame.dataset.ycfReason;
+            if (decision.reason) frame.dataset.ycontentReason = decision.reason;
+            else delete frame.dataset.ycontentReason;
           }
         }
         // 前に開いたページ（隠れている ytd-browse など）の枠は数えない

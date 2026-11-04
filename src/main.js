@@ -63,9 +63,16 @@ export function main() {
   if (stored.missing) writeValue(AVOID_TOPICS_VALUE_KEY, []);
   if (stored.problem) console.warn(`[YouTube Content Filter] ${stored.problem}`);
 
-  if (!options.aiEnabled) return;
+  // 何もしないときも、利用者が設定の効き方を確かめられるよう理由を出す
+  if (!options.aiEnabled) {
+    console.info('[YouTube Content Filter] aiEnabled が false なので、何もしません');
+    return;
+  }
   const topics = stored.topics === null ? null : activeTopics(stored.topics, localDateString(new Date()));
-  if (topics !== null && topics.length === 0) return;
+  if (topics !== null && topics.length === 0) {
+    console.info('[YouTube Content Filter] 判定する話題（期限内の avoidTopics）が無いので、何もしません');
+    return;
+  }
   const topicsUnreadable = topics === null;
   const judgedTopics = topics ?? [];
 

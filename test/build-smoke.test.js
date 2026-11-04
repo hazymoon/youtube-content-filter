@@ -67,7 +67,7 @@ test('話題を設定してビルド結果を実行すると、CSS を入れて�
   };
 
   assert.doesNotThrow(() => vm.runInNewContext(buildUserscript(), context));
-  assert.equal(html.hasAttribute('data-ycf-active'), true);
+  assert.equal(html.hasAttribute('data-ycontent-active'), true);
   assert.ok(
     html.children.some((child) => child.tagName === 'STYLE' && child.textContent.includes('visibility: hidden')),
   );

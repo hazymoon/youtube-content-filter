@@ -5,17 +5,17 @@
 import { FRAME_SELECTORS, PLAYER_FRAME_SELECTOR, STILL_SELECTOR } from './selectors.js';
 
 /** html 要素に付ける。判定する話題があり、枠を隠して判定する間だけ付ける */
-export const ACTIVE_ATTRIBUTE = 'data-ycf-active';
+export const ACTIVE_ATTRIBUTE = 'data-ycontent-active';
 /** 枠に付ける。値は src/decide.js の FrameState */
-export const STATE_ATTRIBUTE = 'data-ycf-state';
+export const STATE_ATTRIBUTE = 'data-ycontent-state';
 /** 枠に付ける。判定した動画の ID とタイトル・チャンネル名のハッシュ。中身が入れ替わったかを見分ける */
-export const KEY_ATTRIBUTE = 'data-ycf-key';
+export const KEY_ATTRIBUTE = 'data-ycontent-key';
 /** 枠に付ける。帯を押して、その場だけ見せている間だけ付ける */
-export const REVEAL_ATTRIBUTE = 'data-ycf-reveal';
+export const REVEAL_ATTRIBUTE = 'data-ycontent-reveal';
 /** 帯の要素のクラス */
-export const BAND_CLASS = 'ycf-band';
+export const BAND_CLASS = 'ycontent-band';
 /** 件数バーの要素の ID */
-export const BAR_ID = 'ycf-bar';
+export const BAR_ID = 'ycontent-bar';
 
 /** ぼかす部分（サムネイル） */
 const THUMBNAIL_SELECTORS = [
