@@ -1,0 +1,1 @@
+# git blame で読み飛ばす、体裁だけを変えたコミット（git config blame.ignoreRevsFile .git-blame-ignore-revs）
